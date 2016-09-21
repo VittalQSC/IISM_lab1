@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,11 +14,9 @@ public class Main {
     static ArrayList<Double> D2;
     static ArrayList<Double> D3;
     static ArrayList<Integer> alpha_z;
-
-//    public static int alpha_z(int alpha) {
-////        if ()
-//       return (beta * alpha) % M;
-//    }
+    static ArrayList<Integer> gamma;
+    static int k = 1000;
+    static int L = 10;
 
     public static void main(String[] args) {
         // A
@@ -29,7 +28,6 @@ public class Main {
 
         int alpha_z0 = beta;
 
-        int k = 1000;
         D1 = new ArrayList<Double>(k);
         alpha_z = new ArrayList<Integer>(k);
 
@@ -38,12 +36,18 @@ public class Main {
                 alpha_z.add(alpha_z0);
                 D1.add( (double)alpha_z0 / (double)M);
             } else {
-                alpha_z.add((beta * alpha_z.get(i - 1)) % M);
+                BigInteger biBeta = BigInteger.valueOf(beta);
+                BigInteger biAlpha_z = BigInteger.valueOf(alpha_z.get(i - 1));
+                BigInteger mul = biBeta.multiply(biAlpha_z);
+                BigInteger mod = mul.mod(BigInteger.valueOf(M));
+
+//                BigInteger bi
+                alpha_z.add(mod.intValue());
                 D1.add((double)alpha_z.get(i) / (double)M);
             }
 
         }
-        System.out.println(D1.size());
+        System.out.println(D1);
 
         // B
         D2 = new ArrayList<Double>(k);
@@ -56,5 +60,40 @@ public class Main {
         System.out.println(D2.size());
 
         // C
+        D3 = new ArrayList<Double>(k);
+        for (int i = 0; i < k; i++) {
+            D3.add(D1.get(
+                    (int) (D2.get(i) * k)
+            ));
+
+        }
+        System.out.println(D3.size());
+
+        // D
+
+        double T = getT(D3, L);
+        System.out.println(T);
+
+        // 1 - eps = 0.95
+        // nu = L - 1
+        // table -> delta
+        // T = 8.379999999999999
+        // T < delta good else bad
+    }
+
+    public static double getT(ArrayList<Double> x, int L) {
+        double T = 0;
+        int n = k;
+        double pi = (double)1/L;
+        for (int i = 1; i < L; i++) {
+            int mi = 0;
+            for (Double xi : x) {
+                if ((i - 1) * ((double)1/L) < xi && xi < i * ((double)1/L)) {
+                    mi++;
+                }
+            }
+            T += Math.pow((mi - n * pi), 2) / (n * pi);
+        }
+        return T;
     }
 }
