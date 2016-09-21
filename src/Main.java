@@ -77,7 +77,8 @@ public class Main {
         // 1 - eps = 0.95
         // nu = L - 1
         // table -> delta
-        // T = 8.379999999999999
+        // T = 16.669999999999998
+        // delta = 	16,9190
         // T < delta good else bad
     }
 
@@ -95,5 +96,17 @@ public class Main {
             T += Math.pow((mi - n * pi), 2) / (n * pi);
         }
         return T;
+    }
+
+    public static Double Kolmogorov (ArrayList<Double> D) {
+        double d = 0;
+        int n = D.size();
+        for (int i = 0; i < n; i++) {
+            if ((double)(i+1)/n - D.get(i) > d) {
+                d = (double)(i+1)/n - D.get(i);
+            }
+        }
+        // "sqrt(n)*Dn = " + Math.sqrt(n)*d + "; delta = 1.36"
+        return Math.sqrt(n)*d;
     }
 }
