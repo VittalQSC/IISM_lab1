@@ -131,13 +131,75 @@ public class Main {
         ArrayList<Integer> DSV_Bernoulli = getDSV_Bernoulli(BSV, p);
         System.out.println("Bernoulli " + DSV_Bernoulli);
 
+        double expectedValue = p;
+        double ourExpectedValue = getExpectedValue_Bernoulli(DSV_Bernoulli);
+        System.out.println("expectedValue " + expectedValue + " outExpectedValue " + ourExpectedValue);
+
+        double dispersion = p * (1 - p);
+        double ourDispersion = getDispersion_Bernoulli(DSV_Bernoulli, expectedValue);
+        System.out.println("dispersion " + dispersion + " ourDispersion " + ourDispersion);
+
+        ArrayList<Double> DSV_Bernoulli_Double = new ArrayList<Double>();
+        for (Integer integer : DSV_Bernoulli) {
+            DSV_Bernoulli_Double.add((double)integer);
+        }
+        double T = getT(DSV_Bernoulli_Double, 10);
+        System.out.println("Bernoulli Pirson " + T);
+
+        System.out.println();
+
         n = 5;
         p = 0.25;
         BSV = getBSV(n);
         Integer DSV_Binomial = getDSV_Binomial(BSV, p);
         System.out.println("Binomial " + DSV_Binomial);
 
+        expectedValue = n * p;
+        ourExpectedValue = getExpectedValue_Binomial(DSV_Bernoulli);
+        System.out.println("expectedValue " + expectedValue + " outExpectedValue " + ourExpectedValue);
 
+        dispersion = n * p * (1 - p);
+        ourDispersion = getDispersion_Binomial(DSV_Bernoulli, expectedValue);
+        System.out.println("dispersion " + dispersion + " ourDispersion " + ourDispersion);
+
+    }
+
+    private static Double getDispersion_Bernoulli(ArrayList<Integer> dsv_bernoulli, Double expectedValue) {
+        double dispersion = 0;
+        int n = dsv_bernoulli.size();
+        for (Integer success : dsv_bernoulli) {
+            dispersion += (double)Math.pow(success - expectedValue, 2) / n;
+        }
+        return dispersion;
+    }
+
+
+    private static Double getExpectedValue_Bernoulli(ArrayList<Integer> DSV_Bernoulli) {
+        double expectedValue = 0;
+        int n = DSV_Bernoulli.size();
+        for (Integer success : DSV_Bernoulli) {
+            expectedValue += (double)success / n;
+        }
+        return expectedValue;
+    }
+
+    private static Double getDispersion_Binomial(ArrayList<Integer> dsv_bernoulli, Double expectedValue) {
+        double dispersion = 0;
+        int n = dsv_bernoulli.size();
+        for (Integer success : dsv_bernoulli) {
+            dispersion += (double)Math.pow(success - expectedValue, 2) / n;
+        }
+        return dispersion;
+    }
+
+
+    private static Double getExpectedValue_Binomial(ArrayList<Integer> DSV_Bernoulli) {
+        double expectedValue = 0;
+        int n = DSV_Bernoulli.size();
+        for (Integer success : DSV_Bernoulli) {
+            expectedValue += (double)success / n;
+        }
+        return expectedValue;
     }
 
     private static ArrayList<Integer> getDSV_Bernoulli(ArrayList<Double> bsv, double p) {
@@ -158,6 +220,8 @@ public class Main {
         }
         return  x;
     }
+
+
 
     public static ArrayList<Double> getBSV(int k) {
         // A
