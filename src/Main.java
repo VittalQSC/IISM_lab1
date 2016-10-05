@@ -143,8 +143,9 @@ public class Main {
         for (Integer integer : DSV_Bernoulli) {
             DSV_Bernoulli_Double.add((double)integer);
         }
-        double T = getT(DSV_Bernoulli_Double, 10);
-        System.out.println("Bernoulli Pirson " + T);
+//        double T = getT(DSV_Bernoulli_Double, 10);
+//        System.out.println("Bernoulli Pirson " + T);
+        test_bernulli_distribution(DSV_Bernoulli);
 
         System.out.println();
 
@@ -163,6 +164,28 @@ public class Main {
         System.out.println("dispersion " + dispersion + " ourDispersion " + ourDispersion);
 
     }
+
+    public static void test_bernulli_distribution(ArrayList<Integer> array) {
+        double[] m = {0,0};
+        for (Integer integer : array) {
+            if (integer == 1) {
+                m[1]++;
+            } else  {
+                m[0]++;
+            }
+        }
+
+        double[] p = { 0.3, 0.7 };
+        double sum = 0;
+        for (int i = 0; i < 2; i++)
+        {
+            double a = Math.pow(m[i] - array.size() * p[i], 2);
+            sum = sum + a / (array.size() * p[i]);
+        }
+
+        System.out.println("Pirson Bernulli: " + sum);
+    }
+
 
     private static Double getDispersion_Bernoulli(ArrayList<Integer> dsv_bernoulli, Double expectedValue) {
         double dispersion = 0;
