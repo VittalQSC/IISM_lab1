@@ -1,5 +1,6 @@
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -47,7 +48,7 @@ public class Main {
             }
 
         }
-        System.out.println(D1);
+//        System.out.println(D1);
 
         // B
         D2 = new ArrayList<Double>(k);
@@ -57,7 +58,7 @@ public class Main {
             randomValue = r.nextDouble();
             D2.add(randomValue);
         }
-        System.out.println(D2.size());
+//        System.out.println(D2.size());
 
         // C
         D3 = new ArrayList<Double>(k);
@@ -67,7 +68,7 @@ public class Main {
             ));
 
         }
-        System.out.println(D3.size());
+//        System.out.println(D3.size());
 
         // D
 
@@ -80,6 +81,9 @@ public class Main {
         // T = 16.669999999999998
         // delta = 	16,9190
         // T < delta good else bad
+        System.out.println(Kolmogorov(D3));
+
+        lab2();
     }
 
     public static double getT(ArrayList<Double> x, int L) {
@@ -101,12 +105,110 @@ public class Main {
     public static Double Kolmogorov (ArrayList<Double> D) {
         double d = 0;
         int n = D.size();
+        D.sort(new Comparator<Double>() {
+            @Override
+            public int compare(Double aDouble, Double t1) {
+
+                return (int)(aDouble - t1);
+            }
+        });
         for (int i = 0; i < n; i++) {
             if ((double)(i+1)/n - D.get(i) > d) {
                 d = (double)(i+1)/n - D.get(i);
             }
         }
         // "sqrt(n)*Dn = " + Math.sqrt(n)*d + "; delta = 1.36"
-        return Math.sqrt(n)*d;
+//        return Math.sqrt(n)*d;
+        return d;
+    }
+
+    public static void lab2() {
+        int n = 1000;
+        double p;
+
+        ArrayList<Double> BSV = getBSV(n);
+        p = 0.7;
+        ArrayList<Integer> DSV_Bernoulli = getDSV_Bernoulli(BSV, p);
+        System.out.println("Bernoulli " + DSV_Bernoulli);
+
+        n = 5;
+        p = 0.25;
+        BSV = getBSV(n);
+        Integer DSV_Binomial = getDSV_Binomial(BSV, p);
+        System.out.println("Binomial " + DSV_Binomial);
+
+
+    }
+
+    private static ArrayList<Integer> getDSV_Bernoulli(ArrayList<Double> bsv, double p) {
+        ArrayList<Integer> dsv = new ArrayList<Integer>();
+        for (Double sv : bsv) {
+                dsv.add(sv <= p ? 1 : 0);
+        }
+        return  dsv;
+    }
+
+    private static Integer getDSV_Binomial(ArrayList<Double> bsv, double p) {
+        ArrayList<Integer> DSV_Bernoulli = getDSV_Bernoulli(bsv, p);
+        int x = 0;
+        for (Integer success : DSV_Bernoulli) {
+            if (success == 1) {
+                x++;
+            }
+        }
+        return  x;
+    }
+
+    public static ArrayList<Double> getBSV(int k) {
+        // A
+
+        // input: (alpha, beta, M)
+        // beta = 2*20 + 3
+        beta = (int) (Math.pow(2, 20) + 3);
+        M = (int) Math.pow(2, 31);
+
+        int alpha_z0 = beta;
+
+        D1 = new ArrayList<Double>(k);
+        alpha_z = new ArrayList<Integer>(k);
+
+        for (int i = 0; i < k; i++) {
+            if (i == 0) {
+                alpha_z.add(alpha_z0);
+                D1.add( (double)alpha_z0 / (double)M);
+            } else {
+                BigInteger biBeta = BigInteger.valueOf(beta);
+                BigInteger biAlpha_z = BigInteger.valueOf(alpha_z.get(i - 1));
+                BigInteger mul = biBeta.multiply(biAlpha_z);
+                BigInteger mod = mul.mod(BigInteger.valueOf(M));
+
+//                BigInteger bi
+                alpha_z.add(mod.intValue());
+                D1.add((double)alpha_z.get(i) / (double)M);
+            }
+
+        }
+//        System.out.println(D1);
+
+        // B
+        D2 = new ArrayList<Double>(k);
+        Random r = new Random();
+        double randomValue = 0;
+        for (int i = 0; i < k; i++) {
+            randomValue = r.nextDouble();
+            D2.add(randomValue);
+        }
+//        System.out.println(D2.size());
+
+        // C
+        D3 = new ArrayList<Double>(k);
+        for (int i = 0; i < k; i++) {
+            D3.add(D1.get(
+                    (int) (D2.get(i) * k)
+            ));
+
+        }
+//        System.out.println(D3.size());
+        return D3;
     }
 }
